@@ -1,0 +1,6 @@
+{
+  "name": "AutoClip AI",
+  "description": "Generate viral clips, shorts, and highlights from YouTube videos automatically with AI.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
