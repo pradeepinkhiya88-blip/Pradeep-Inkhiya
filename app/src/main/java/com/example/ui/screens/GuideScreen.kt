@@ -140,6 +140,94 @@ fun GuideScreen(
         }
 
         item {
+            Card(
+                shape = RoundedCornerShape(16.dp),
+                colors = CardDefaults.cardColors(containerColor = Color(0xFF14241E)),
+                border = CardDefaults.outlinedCardBorder().copy(
+                    brush = Brush.horizontalGradient(listOf(Color(0xFF00E676).copy(0.5f), Color(0xFF00B0FF).copy(0.5f)))
+                ),
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                Column(modifier = Modifier.padding(16.dp)) {
+                    Row(verticalAlignment = Alignment.CenterVertically) {
+                        Surface(
+                            shape = RoundedCornerShape(8.dp),
+                            color = Color(0xFF00E676).copy(alpha = 0.2f),
+                            modifier = Modifier.size(36.dp)
+                        ) {
+                            Box(contentAlignment = Alignment.Center) {
+                                Icon(
+                                    imageVector = Icons.Default.Recommend,
+                                    contentDescription = "Install Guide",
+                                    tint = Color(0xFF00E676),
+                                    modifier = Modifier.size(20.dp)
+                                )
+                            }
+                        }
+                        Spacer(modifier = Modifier.width(10.dp))
+                        Text(
+                            text = "📲 How to Download APK to Phone",
+                            style = MaterialTheme.typography.titleSmall,
+                            fontWeight = FontWeight.Bold,
+                            color = Color.White
+                        )
+                    }
+                    Spacer(modifier = Modifier.height(10.dp))
+                    Text(
+                        text = "1. In Google AI Studio on your phone or PC, open the top-right header menu (⋮ or Export).\n2. Tap 'Download APK' or 'Generate APK'.\n3. The base APK will download to your phone's Downloads folder.\n4. Tap the APK file and select 'Install' to use AutoClip AI directly on your Android phone!",
+                        style = MaterialTheme.typography.bodySmall,
+                        color = Color(0xFFE0E5F5),
+                        lineHeight = 20.sp
+                    )
+                }
+            }
+        }
+
+        item {
+            Card(
+                shape = RoundedCornerShape(16.dp),
+                colors = CardDefaults.cardColors(containerColor = Color(0xFF221727)),
+                border = CardDefaults.outlinedCardBorder().copy(
+                    brush = Brush.horizontalGradient(listOf(AutoClipPrimary.copy(0.5f), AutoClipSecondary.copy(0.5f)))
+                ),
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                Column(modifier = Modifier.padding(16.dp)) {
+                    Row(verticalAlignment = Alignment.CenterVertically) {
+                        Surface(
+                            shape = RoundedCornerShape(8.dp),
+                            color = AutoClipPrimary.copy(alpha = 0.2f),
+                            modifier = Modifier.size(36.dp)
+                        ) {
+                            Box(contentAlignment = Alignment.Center) {
+                                Icon(
+                                    imageVector = Icons.Default.ElectricBolt,
+                                    contentDescription = "Video Guide",
+                                    tint = AutoClipPrimary,
+                                    modifier = Modifier.size(20.dp)
+                                )
+                            }
+                        }
+                        Spacer(modifier = Modifier.width(10.dp))
+                        Text(
+                            text = "🎬 How to Save Video to Phone Gallery",
+                            style = MaterialTheme.typography.titleSmall,
+                            fontWeight = FontWeight.Bold,
+                            color = Color.White
+                        )
+                    }
+                    Spacer(modifier = Modifier.height(10.dp))
+                    Text(
+                        text = "1. On any generated clip, tap the Download icon.\n2. Tap 'Generate MP4 Video Clip (Short)'.\n3. The app renders a 9:16 vertical video with burned-in captions, hook, and viral score.\n4. It automatically saves into your phone's Gallery (Movies/AutoClipAI) & Downloads folder!\n5. Tap 'Play Video' or 'Share Video' to send directly to WhatsApp or TikTok.",
+                        style = MaterialTheme.typography.bodySmall,
+                        color = Color(0xFFE0E5F5),
+                        lineHeight = 20.sp
+                    )
+                }
+            }
+        }
+
+        item {
             Spacer(modifier = Modifier.height(20.dp))
         }
     }

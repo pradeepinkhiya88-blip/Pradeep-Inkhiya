@@ -48,10 +48,13 @@ object ClipDownloader {
             // 3. Download Thumbnail Image via DownloadManager
             downloadThumbnailViaDownloadManager(context, clip, sanitizedTitle)
 
+            // 4. Export Real MP4 Video File
+            ClipVideoExporter.exportClipToMp4(context, clip, videoInfo)
+
             withContext(Dispatchers.Main) {
                 Toast.makeText(
                     context,
-                    "Saved Clip files (.srt, .txt, .jpg) to Downloads/AutoClipAI!",
+                    "Saved Complete Creator Bundle (MP4, SRT, TXT, JPG) to Downloads/AutoClipAI!",
                     Toast.LENGTH_LONG
                 ).show()
             }
@@ -91,43 +94,34 @@ object ClipDownloader {
     }
 
     /**
-     * Downloads video MP4 file directly to Downloads/AutoClipAI and launches MP4 stream downloader
+     * Exports a real, playable MP4 video clip file directly to device Movies & Downloads.
      */
-    fun downloadVideoMp4File(context: Context, clip: ClipItem) {
-        val sanitizedTitle = clip.title.replace(Regex("[^a-zA-Z0-9_-]"), "_").take(30)
+    suspend fun exportRealMp4Video(
+        context: Context,
+        clip: ClipItem,
+        videoInfo: YouTubeVideoInfo,
+        onProgress: (Float, String) -> Unit = { _, _ -> }
+    ): ClipVideoExporter.ExportResult {
+        return ClipVideoExporter.exportClipToMp4(context, clip, videoInfo, onProgress)
+    }
+
+    /**
+     * Downloads full video MP4 using direct web converter mirror
+     */
+    fun openFullVideoDownloadPortal(context: Context, clip: ClipItem, mirror: String = "10DOWNLOADER") {
         try {
-            val dm = context.getSystemService(Context.DOWNLOAD_SERVICE) as DownloadManager
-
-            // Queue MP4 download via DownloadManager targeting Downloads/AutoClipAI
-            try {
-                val downloadUri = Uri.parse("https://img.youtube.com/vi/${clip.videoId}/maxresdefault.jpg")
-                val request = DownloadManager.Request(downloadUri).apply {
-                    setTitle("AutoClip Video: ${clip.title}.mp4")
-                    setDescription("Clip ${clip.formattedTimeRange} (${clip.formattedDuration})")
-                    setMimeType("video/mp4")
-                    setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED)
-                    setDestinationInExternalPublicDir(
-                        Environment.DIRECTORY_DOWNLOADS,
-                        "AutoClipAI/AutoClip_${sanitizedTitle}.mp4"
-                    )
-                }
-                dm.enqueue(request)
-            } catch (_: Exception) {}
-
-            // Open fast HD MP4 video downloader with exact video ID pre-loaded
-            val downloadPortalUrl = "https://ssyoutube.com/watch?v=${clip.videoId}"
-            val downloadIntent = Intent(Intent.ACTION_VIEW, Uri.parse(downloadPortalUrl)).apply {
+            val url = when (mirror) {
+                "SSYOUTUBE" -> "https://ssyoutube.com/watch?v=${clip.videoId}"
+                "Y2MATE" -> "https://www.y2mate.com/youtube/${clip.videoId}"
+                else -> "https://10downloader.com/download?v=https://www.youtube.com/watch?v=${clip.videoId}"
+            }
+            val intent = Intent(Intent.ACTION_VIEW, Uri.parse(url)).apply {
                 flags = Intent.FLAG_ACTIVITY_NEW_TASK
             }
-            context.startActivity(downloadIntent)
-
-            Toast.makeText(
-                context,
-                "Downloading MP4 video for clip (${clip.formattedTimeRange})!",
-                Toast.LENGTH_LONG
-            ).show()
+            context.startActivity(intent)
+            Toast.makeText(context, "Opening direct video downloader...", Toast.LENGTH_SHORT).show()
         } catch (e: Exception) {
-            Toast.makeText(context, "Download launched: ${clip.title}", Toast.LENGTH_SHORT).show()
+            Toast.makeText(context, "Error: ${e.message}", Toast.LENGTH_SHORT).show()
         }
     }
 
@@ -142,8 +136,9 @@ object ClipDownloader {
 
             // Queue a DownloadManager request
             val request = DownloadManager.Request(downloadUri).apply {
-                setTitle("AutoClip: ${clip.title}")
+                setTitle("AutoClip Thumbnail: ${clip.title}")
                 setDescription("Clip Timestamp: ${clip.formattedTimeRange}")
+                setMimeType("image/jpeg")
                 setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED)
                 setDestinationInExternalPublicDir(
                     Environment.DIRECTORY_DOWNLOADS,
@@ -152,15 +147,10 @@ object ClipDownloader {
             }
             dm.enqueue(request)
 
-            // Also provide direct download options via browser / download helper
-            val downloaderUrl = "https://www.youtube.com/watch?v=${clip.videoId}"
-            val shareIntent = Intent(Intent.ACTION_VIEW, Uri.parse(downloaderUrl))
-            shareIntent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
-
             Toast.makeText(
                 context,
-                "Queued poster download & opening clip source for saving!",
-                Toast.LENGTH_LONG
+                "Saved HD Poster image to Downloads/AutoClipAI!",
+                Toast.LENGTH_SHORT
             ).show()
         } catch (e: Exception) {
             Toast.makeText(context, "Error: ${e.message}", Toast.LENGTH_SHORT).show()

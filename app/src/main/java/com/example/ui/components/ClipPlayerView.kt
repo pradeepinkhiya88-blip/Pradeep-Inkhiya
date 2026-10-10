@@ -208,6 +208,13 @@ fun ClipPlayerView(
                     AndroidView(
                         factory = { ctx ->
                             try {
+                                val webViewJsDir = java.io.File(ctx.cacheDir, "WebView/Default/HTTP Cache/Code Cache/js")
+                                if (!webViewJsDir.exists()) {
+                                    webViewJsDir.mkdirs()
+                                }
+                            } catch (_: Exception) {}
+
+                            try {
                                 WebView(ctx).apply {
                                     // Use software layer to prevent MESA rendernode DRI device errors
                                     setLayerType(android.view.View.LAYER_TYPE_SOFTWARE, null)
@@ -224,6 +231,13 @@ fun ClipPlayerView(
                                             description: String?,
                                             failingUrl: String?
                                         ) {}
+
+                                        override fun onRenderProcessGone(
+                                            view: WebView?,
+                                            detail: android.webkit.RenderProcessGoneDetail?
+                                        ): Boolean {
+                                            return true
+                                        }
                                     }
                                     webViewRef = this
                                     loadUrl(clip.getEmbedUrl(autoplay = true))

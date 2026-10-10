@@ -70,10 +70,11 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
 
+        // Pre-create WebView cache directory structure to prevent Chromium simple_backend directory creation failure
         try {
-            val webViewCacheDir = java.io.File(applicationContext.cacheDir, "WebView/Default/HTTP Cache/Code Cache/js")
-            if (!webViewCacheDir.exists()) {
-                webViewCacheDir.mkdirs()
+            val webViewJsDir = java.io.File(cacheDir, "WebView/Default/HTTP Cache/Code Cache/js")
+            if (!webViewJsDir.exists()) {
+                webViewJsDir.mkdirs()
             }
         } catch (_: Exception) {}
 
